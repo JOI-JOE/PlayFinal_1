@@ -2,12 +2,14 @@
 
 namespace  Danghau\Playfinal\Commons;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 class Model
 {
-    protected $conn;
-    protected $queryBuilder;
+    protected Connection|null $conn;
+    protected QueryBuilder $queryBuilder;
     protected string $tableName;
 
     public function __construct()
@@ -22,35 +24,90 @@ class Model
         ];
 
         $this->conn = DriverManager::getConnection($connectionParams);
-        $this->queryBuilder = $this->conn->createQueryBuilder(); // truy vấn 
+
+        $this->queryBuilder = $this->conn->createQueryBuilder();
     }
 
-    //CRUD
-    protected function all()
-    {
-    }
-
-    protected function paginate($page, $perPage)
-    {
-    }
-
-    protected function insert()
-    {
-    }
-    protected function update()
-    {
-    }
-
-    protected function delete()
-    {
-    }
-
-    public function getAll(string ...$columns)
+    // CRUD
+    public function all()
     {
         return $this->queryBuilder
-            ->select(...$columns)
+            ->select('*')
             ->from($this->tableName)
             ->fetchAllAssociative();
+    }
+
+    public function paginate($page = 1, $perPage = 10)
+    {
+        $offset = $perPage * ($page - 1);
+
+        return $this->queryBuilder
+            ->select('*')
+            ->from($this->tableName)
+            ->setFirstResult($offset)
+            ->setMaxResults($perPage)
+            ->fetchAllAssociative();
+    }
+
+    public function findByID($id)
+    {
+        return $this->queryBuilder
+            ->select('*')
+            ->from($this->tableName)
+            ->where('id = ?')
+            ->setParameter(0, $id)
+            ->fetchAssociative();
+    }
+
+    public function insert(array $data)
+    {
+        if (!empty($data)) {
+            $query = $this->queryBuilder->insert($this->tableName);
+
+            $index = 0;
+            foreach ($data as $key => $value) {
+                $query->setValue($key, '?')->setParameter($index, $value);
+
+                ++$index;
+            }
+
+            $query->executeQuery();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function update($id, array $data)
+    {
+        if (!empty($data)) {
+            $query = $this->queryBuilder->update($this->tableName);
+
+            $index = 0;
+            foreach ($data as $key => $value) {
+                $query->set($key, '?')->setParameter($index, $value);
+
+                ++$index;
+            }
+
+            $query->where('id = ?')
+                ->setParameter(count($data), $id)
+                ->executeQuery();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function delete($id)
+    {
+        return $this->queryBuilder
+            ->delete($this->tableName)
+            ->where('id = ?')
+            ->setParameter(0, $id)
+            ->executeQuery();
     }
 
     public function __destruct()
