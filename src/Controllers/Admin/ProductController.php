@@ -21,11 +21,11 @@ class ProductController extends Controller
 
     public function index()
     {
-        [$products, $totalPage] = $this->product->paginate();
+        // [$products, $totalPage] = $this->product->paginate();
+        $products = $this->product->all();
 
         $this->renderAdmin("products.index", [
             "products" => $products,
-            "totalPage" => $totalPage,
         ]);
     }
 
@@ -42,57 +42,52 @@ class ProductController extends Controller
 
     public function store()
     {
-        // VALIDATE
+        // Validate the form data
         $validator = new Validator;
-        // make it
-        $validation = $validator->make($_POST + $_FILES, [
-            'email'                           => 'required',
-            'name'                            => 'required',
-            'category_id'                     => 'required',
-            'overview'                        => 'max:500',
-            'content'                         => 'max:65000',
-            'img_thumbnail'                   => 'uploaded_file:0,1000K,png,jpeg',
-        ]);
-
-        // then validate
+        $validation = $validator->make(
+            $_POST + $_FILES,
+            [
+                'name'                     => 'required',
+                'price'                    => 'required|regex:/^\d+(\.\d{1,2})?$/',
+                'category_id'              => 'required',
+                'product_img'              => 'uploaded_file:0,1000K,png,jpeg', // File must be under 1MB and in jpeg or png format
+            ]
+        );
         $validation->validate();
-        // then validate
+
+        // If validation fails, redirect back to the form with error messages
         if ($validation->fails()) {
-
             $_SESSION['errors'] = $validation->errors()->firstOfAll();
-
             header('Location: ' . url('admin/products/create'));
             exit;
         } else {
+            // Prepare the data to be inserted into the database
             $data = [
-                'email'         => $_POST['email'],
-                'password'      => !empty($_POST['password']),
-                'name'          => $_POST['name'],
-                'category_id'   => $_POST['category_id'],
-                'overview'      => $_POST['overview'],
-                'content'       => $_POST['content'],
+                'name'           => $_POST['name'],
+                'price'          => $_POST['price'],
+                'category_id'    => $_POST['category_id'],
+                'product_img'    => $_FILES['product_img']
             ];
 
-            if (!empty($_FILES['img_thumbnail']) && $_FILES['img_thumbnail']['size'] > 0) {
-                $from = $_FILES['img_thumbnail']['tmp_name'];
-                $to   = 'assets/uploads/' . time() . $_FILES['img_thumbnail']['name'];
-
+            // Move the uploaded file to the server if it exists
+            if (!empty($_FILES['product_img']) && $_FILES['product_img']['size'] > 0) {
+                $from = $_FILES['product_img']['tmp_name'];
+                $to   = 'assets/uploads/' . time() . $_FILES['product_img']['name'];
                 if (move_uploaded_file($from, PATH_ROOT . $to)) {
-                    $data['img_thumbnail'] = $to;
+                    $data['product_img'] = $to;
                 } else {
-                    $_SESSION['errors']['img_thumbnail'] = 'Upload Not Successfully';
+                    $_SESSION['errors']['product_img'] = 'Upload Not Successfully';
                     header('Location: ' . url('admin/products/create'));
                     exit;
                 }
             }
 
-            // $this->product->insert($data);
+            // Insert the data into the database
+            $this->product->insert($data);
 
-            Helper::debug($data);
-
+            // Set success message and redirect to products page
             $_SESSION['status'] = true;
-            $_SESSION['msg'] = "Succesfully";
-
+            $_SESSION['msg'] = "Successfully";
             header('Location: ' . url('admin/products'));
             exit;
         }
@@ -100,8 +95,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product   = $this->product->findByID($id);
-
+        $product = $this->product->findByID($id);
 
         $this->renderAdmin('products.show', [
             'product' => $product,
@@ -130,12 +124,10 @@ class ProductController extends Controller
         $validation = $validator->make(
             $_POST + $_FILES,
             [
-                'category_id'   => 'required',
-                'password'      => 'required',
-                'name'          => 'required|max:100',
-                'overview'      => 'max:500',
-                'content'       => 'max:65000',
-                'img_thumbnail' => 'uploaded_file:0,2048K,png,jpeg,jpg',
+                'name'                     => 'required',
+                'price'                    => 'required|regex:/^\d+(\.\d{1,2})?$/',
+                'category_id'              => 'required',
+                'product_img'              => 'uploaded_file:0,1000K,png,jpeg', // File must be under 1MB and in jpeg or png format
             ]
         );
         $validation->validate();
@@ -148,64 +140,57 @@ class ProductController extends Controller
         }
 
         $data = [
-            'category_id'   => $_POST['category_id'],
-            'name'          => $_POST['name'],
-            'overview'      => $_POST['overview'],
-            'content'       => $_POST['content'],
-            'updated_at'    => date('Y-m-d H:i:s'),
+            'name'           => $_POST['name'],
+            'price'          => $_POST['price'],
+            'category_id'    => $_POST['category_id'],
         ];
 
         $flagUpload = false;
-        if (!empty($_FILES['img_thumbnail']) && $_FILES['img_thumbnail']['size'] > 0) {
+        if (isset($_FILES['product_img']) && $_FILES['product_img']['size'] > 0) {
 
-            $from = $_FILES['img_thumbnail']['tmp_name'];
-            $to   = 'assets/uploads/' . time() . $_FILES['img_thumbnail']['name'];
+            $flagUpload = true;
+
+            $from = $_FILES['product_img']['tmp_name'];
+            $to   = 'assets/uploads/' . time() . $_FILES['product_img']['name'];
 
             if (move_uploaded_file($from, PATH_ROOT . $to)) {
-                $data['img_thumbnail'] = $to;
-                $flagUpload = true;
-            } else {
-
-                $_SESSION['errors']['img_thumbnail'] = 'Upload KHÔNG thành công!';
-
-                header('Location: ' . url("admin/products/$id/edit"));
-                exit;
+                $data['product_img'] = $to;
             }
         }
 
         $this->product->update($id, $data);
 
         if (
-            $flagUpload
-            && $product['img_thumbnail']
-            && file_exists(PATH_ROOT . $product['img_thumbnail'])
+            $flagUpload &&
+            $product['product_img'] &&
+            file_exists(PATH_ROOT . $product['product_img'])
         ) {
-            unlink(PATH_ROOT . $product['img_thumbnail']);
+            unlink(PATH_ROOT . $product['product_img']);
         }
 
-        $_SESSION['status'] = true;
-        $_SESSION['msg'] = 'Thao tác thành công!';
+        // Helper::debug($data);
 
-        header('Location: ' . url("admin/products/$id/edit"));
+        $_SESSION['status'] = true;
+        $_SESSION['msg'] = 'Upload Successfully!';
+
+        header('Location: ' . url("admin/products/{$product['id']}/edit"));
         exit;
     }
 
     public function delete($id)
     {
+
         try {
             $product = $this->product->findByID($id);
 
             $this->product->delete($id);
 
-            if ($product['img_thumbnail'] && file_exists(PATH_ROOT . $product['img_thumbnail'])) {
-                unlink(PATH_ROOT . $product['img_thumbnail']);
+            if ($product['product_img'] && file_exists(PATH_ROOT . $product['product_img'])) {
+                unlink(PATH_ROOT . $product['product_img']);
             }
-
-            $_SESSION['status'] = true;
-            $_SESSION['msg'] = 'Thao tác thành công!';
         } catch (\Throwable $th) {
             $_SESSION['status'] = false;
-            $_SESSION['msg'] = 'Thao tác KHÔNG thành công!';
+            $_SESSION['msg'] = 'Delete Successfully';
         }
 
         header('Location: ' . url('admin/products'));

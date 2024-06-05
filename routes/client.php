@@ -1,20 +1,17 @@
 <?php
 
-use Danghau\Playfinal\Controllers\Client\AboutController;
-use Danghau\Playfinal\Controllers\Client\ContactController;
+use Danghau\Playfinal\Controllers\Client\AuthController;
 use Danghau\Playfinal\Controllers\Client\HomeController;
-use Danghau\Playfinal\Controllers\Client\ProductController;
 
-// Create Router instance
-// website có các trang là 
-/*
-trang chủ
-giới tiệu
-sản phẩm
-chi tiết sản phẩm 
-lieent hệ
+$router->get('/', HomeController::class . '@index');
 
-để định nghĩa được phải tảo controller trước đã
-*/
+$router->mount('/auth', function () use ($router) {
 
-// HTTP method : get, post, put, delete , option , 
+    $router->get('/login',         AuthController::class         . '@showFormLogin');
+    $router->post('/handle-login', AuthController::class         . '@login');
+    $router->get('/logout',        AuthController::class         . '@logout');
+});
+
+// $router->get('/auth/login',         AuthController::class         . '@showFormLogin');
+// $router->post('/auth/handle-login', AuthController::class         . '@login');
+// $router->get('/auth/logout',        AuthController::class         . '@logout');
