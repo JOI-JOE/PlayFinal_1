@@ -18,13 +18,3 @@ lieent hệ
 */
 
 // HTTP method : get, post, put, delete , option , 
-
-
-$router->get('/',              HomeController::class    . '@index');
-$router->get('/about',         AboutController::class   . '@index');
-
-$router->get('/contact',        ContactController::class . '@index');
-$router->post('/contact/store', ContactController::class . '@store');
-
-$router->get('/products',      ProductController::class . '@index');
-$router->get('/products/{id}', ProductController::class . '@store');

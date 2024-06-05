@@ -3,8 +3,7 @@
 namespace Danghau\Playfinal\Controllers\Client;
 
 use Danghau\Playfinal\Commons\Controller;
-use Danghau\Playfinal\Commons\Helper;
-use Danghau\Playfinal\Models\User;
+
 
 class HomeController extends Controller
 {
