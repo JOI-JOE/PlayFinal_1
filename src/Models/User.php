@@ -6,7 +6,7 @@ use Danghau\Playfinal\Commons\Model;
 
 class User extends Model
 {
-    protected string $tableName = 'user';
+    protected string $tableName = 'users';
 
     public function findByEmail($email)
     {

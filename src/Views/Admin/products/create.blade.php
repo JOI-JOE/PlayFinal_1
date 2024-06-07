@@ -25,8 +25,14 @@
             </div>
 
             <div class="input-group mb-4">
-                <span class="input-group-text">$</span>
-                <input type="number" name="price" class="form-control" aria-label="Amount (to the nearest dollar)">
+                <span class="input-group-text">Regular</span>
+                <input type="number" name="price_regular" class="form-control" aria-label="Amount (to the nearest dollar)">
+                <span class="input-group-text">.00</span>
+            </div>
+
+            <div class="input-group mb-4">
+                <span class="input-group-text">Sale</span>
+                <input type="number" name="price_sale" class="form-control" aria-label="Amount (to the nearest dollar)">
                 <span class="input-group-text">.00</span>
             </div>
 
@@ -41,7 +47,7 @@
 
             <div class="mb-4">
                 <label for="formFile" class="form-label">Img</label>
-                <input class="form-control" type="file" name="product_img" id="formFile">
+                <input class="form-control" type="file" name="img_thumbnail" id="formFile">
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>

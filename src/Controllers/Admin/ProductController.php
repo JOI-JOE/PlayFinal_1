@@ -48,9 +48,9 @@ class ProductController extends Controller
             $_POST + $_FILES,
             [
                 'name'                     => 'required',
-                'price'                    => 'required|regex:/^\d+(\.\d{1,2})?$/',
+                'price_regular'            => 'required|regex:/^\d+(\.\d{1,2})?$/',
                 'category_id'              => 'required',
-                'product_img'              => 'uploaded_file:0,1000K,png,jpeg', // File must be under 1MB and in jpeg or png format
+                'img_thumbnail'            => 'uploaded_file:0,1000K,png,jpeg', // File must be under 1MB and in jpeg or png format
             ]
         );
         $validation->validate();
@@ -64,19 +64,20 @@ class ProductController extends Controller
             // Prepare the data to be inserted into the database
             $data = [
                 'name'           => $_POST['name'],
-                'price'          => $_POST['price'],
+                'price_regular'  => $_POST['price_regular'],
+                'price_sale'     => $_POST['price_sale'],
                 'category_id'    => $_POST['category_id'],
-                'product_img'    => $_FILES['product_img']
+                'img_thumbnail'  => $_FILES['img_thumbnail']
             ];
 
             // Move the uploaded file to the server if it exists
-            if (!empty($_FILES['product_img']) && $_FILES['product_img']['size'] > 0) {
-                $from = $_FILES['product_img']['tmp_name'];
-                $to   = 'assets/uploads/' . time() . $_FILES['product_img']['name'];
+            if (!empty($_FILES['img_thumbnail']) && $_FILES['img_thumbnail']['size'] > 0) {
+                $from = $_FILES['img_thumbnail']['tmp_name'];
+                $to   = 'assets/admin/images/' . time() . $_FILES['img_thumbnail']['name'];
                 if (move_uploaded_file($from, PATH_ROOT . $to)) {
-                    $data['product_img'] = $to;
+                    $data['img_thumbnail'] = $to;
                 } else {
-                    $_SESSION['errors']['product_img'] = 'Upload Not Successfully';
+                    $_SESSION['errors']['img_thumbnail'] = 'Upload Not Successfully';
                     header('Location: ' . url('admin/products/create'));
                     exit;
                 }
@@ -125,9 +126,9 @@ class ProductController extends Controller
             $_POST + $_FILES,
             [
                 'name'                     => 'required',
-                'price'                    => 'required|regex:/^\d+(\.\d{1,2})?$/',
+                'price_regular'            => 'required|regex:/^\d+(\.\d{1,2})?$/',
                 'category_id'              => 'required',
-                'product_img'              => 'uploaded_file:0,1000K,png,jpeg', // File must be under 1MB and in jpeg or png format
+                'img_thumbnail'            => 'uploaded_file:0,1000K,png,jpeg', // File must be under 1MB and in jpeg or png format
             ]
         );
         $validation->validate();
@@ -141,20 +142,21 @@ class ProductController extends Controller
 
         $data = [
             'name'           => $_POST['name'],
-            'price'          => $_POST['price'],
+            'price_regular'  => $_POST['price_regular'],
+            'price_sale'     => $_POST['price_sale'],
             'category_id'    => $_POST['category_id'],
         ];
 
         $flagUpload = false;
-        if (isset($_FILES['product_img']) && $_FILES['product_img']['size'] > 0) {
+        if (isset($_FILES['img_thumbnail']) && $_FILES['img_thumbnail']['size'] > 0) {
 
             $flagUpload = true;
 
-            $from = $_FILES['product_img']['tmp_name'];
-            $to   = 'assets/uploads/' . time() . $_FILES['product_img']['name'];
+            $from = $_FILES['img_thumbnail']['tmp_name'];
+            $to   = 'assets/admin/images/' . time() . $_FILES['img_thumbnail']['name'];
 
             if (move_uploaded_file($from, PATH_ROOT . $to)) {
-                $data['product_img'] = $to;
+                $data['img_thumbnail'] = $to;
             }
         }
 
@@ -162,10 +164,10 @@ class ProductController extends Controller
 
         if (
             $flagUpload &&
-            $product['product_img'] &&
-            file_exists(PATH_ROOT . $product['product_img'])
+            $product['img_thumbnail'] &&
+            file_exists(PATH_ROOT . $product['img_thumbnail'])
         ) {
-            unlink(PATH_ROOT . $product['product_img']);
+            unlink(PATH_ROOT . $product['img_thumbnail']);
         }
 
         // Helper::debug($data);
@@ -185,8 +187,8 @@ class ProductController extends Controller
 
             $this->product->delete($id);
 
-            if ($product['product_img'] && file_exists(PATH_ROOT . $product['product_img'])) {
-                unlink(PATH_ROOT . $product['product_img']);
+            if ($product['img_thumbnail'] && file_exists(PATH_ROOT . $product['img_thumbnail'])) {
+                unlink(PATH_ROOT . $product['img_thumbnail']);
             }
         } catch (\Throwable $th) {
             $_SESSION['status'] = false;

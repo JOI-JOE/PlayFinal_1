@@ -6,7 +6,7 @@ use Danghau\Playfinal\Commons\Model;
 
 class Product extends Model
 {
-    protected string $tableName = 'product';
+    protected string $tableName = 'products';
 
     public function all()
     {
@@ -14,12 +14,12 @@ class Product extends Model
             ->select(
                 'p.id',
                 'p.name',
-                'p.price',
-                'p.product_img',
+                'p.price_regular',
+                'p.img_thumbnail',
                 'c.name as c_name'
             )
             ->from($this->tableName, 'p')
-            ->innerJoin('p', 'category', 'c', 'c.id = p.category_id ')
+            ->innerJoin('p', 'categories', 'c', 'c.id = p.category_id ')
             ->orderBy('p.id', 'desc')
             ->fetchAllAssociative();
     }
@@ -52,24 +52,25 @@ class Product extends Model
     //     return [$data, $totalPage];
     // }
 
-    // public function findByID($id)
-    // {
-    //     return $this->queryBuilder
-    //         ->select(
-    //             'p.id',
-    //             'p.category_id',
-    //             'p.name',
-    //             'p.img_thumbnail',
-    //             'p.created_at',
-    //             'p.updated_at',
-    //             'p.overview',
-    //             'p.content',
-    //             'c.name as c_name'
-    //         )
-    //         ->from($this->tableName, 'p')
-    //         ->innerJoin('p', 'categories', 'c', 'c.id = p.category_id')
-    //         ->where('p.id = ?')
-    //         ->setParameter(0, $id)
-    //         ->fetchAssociative();
-    // }
+    public function findByID($id)
+    {
+        return $this->queryBuilder
+            ->select(
+                'p.id',
+                'p.category_id',
+                'p.name',
+                'p.price_regular',
+                'p.img_thumbnail',
+                'p.created_at',
+                'p.updated_at',
+                'p.overview',
+                'p.content',
+                'c.name as c_name'
+            )
+            ->from($this->tableName, 'p')
+            ->innerJoin('p', 'categories', 'c', 'c.id = p.category_id')
+            ->where('p.id = ?')
+            ->setParameter(0, $id)
+            ->fetchAssociative();
+    }
 }

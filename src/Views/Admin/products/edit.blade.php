@@ -45,17 +45,24 @@
             </div>
 
             <div class="input-group mb-4">
-                <span class="input-group-text">$</span>
-                <input type="number" name="price" value="{{ $product['price'] }}" class="form-control"
+                <span class="input-group-text">Regular</span>
+                <input type="number" name="price_regular" value="{{ $product['price_regular'] }}" class="form-control"
+                    aria-label="Amount (to the nearest dollar)">
+                <span class="input-group-text">.00</span>
+            </div>
+
+            <div class="input-group mb-4">
+                <span class="input-group-text">Sale</span>
+                <input type="number" name="price_sale" value="{{ $product['price_sale'] }}" class="form-control"
                     aria-label="Amount (to the nearest dollar)">
                 <span class="input-group-text">.00</span>
             </div>
 
             <div class="mb-4">
                 <label for="formFile" class="form-label">Img</label>
-                <input class="form-control" type="file" name="product_img" id="formFile">
+                <input class="form-control" type="file" name="img_thumbnail" id="formFile">
                 <div class="mb-4 mt-2">
-                    <img src="{{ asset("{$product['product_img']}") }}" alt="" width="100"
+                    <img src="{{ asset("{$product['img_thumbnail']}") }}" alt="" width="100"
                         style="border-radius: 10px;">
                 </div>
             </div>

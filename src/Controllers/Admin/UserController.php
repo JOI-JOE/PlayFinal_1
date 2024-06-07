@@ -60,12 +60,12 @@ class UserController extends Controller
             if (isset($_FILES['avatar']) && $_FILES['avatar']['size'] > 0) {
 
                 $from = $_FILES['avatar']['tmp_name'];
-                $to = 'assets/uploads/' . time() . $_FILES['avatar']['name'];
+                $to = 'assets/admin/users/' . time() . $_FILES['avatar']['name'];
 
                 if (move_uploaded_file($from, PATH_ROOT . $to)) {
                     $data['avatar'] = $to;
                 } else {
-                    +$_SESSION['errors']['avatar'] = 'Upload fail';
+                    $_SESSION['errors']['avatar'] = 'Upload fail';
 
                     header('Location: ' . url('admin/users/create'));
                     exit;
@@ -126,7 +126,9 @@ class UserController extends Controller
                 'type'      => $_POST['type'],
                 'password'  => !empty($_POST['password']) ?
                     password_hash($_POST['password'], PASSWORD_DEFAULT) : $user['password'],
-
+                // Add 7 hours to the current time in the format 'Y-m-d H:i:s'
+                // This is because the 'updated_at' field is in UTC+7 time zone.
+                'updated_at' => date('Y-m-d H:i:s', time() + (7 * 3600)),
             ];
 
             $flagUpload = false;
@@ -135,7 +137,7 @@ class UserController extends Controller
                 $flagUpload = true;
 
                 $from = $_FILES['avatar']['tmp_name'];
-                $to = 'assets/uploads/' . time() . $_FILES['avatar']['name'];
+                $to = 'assets/admin/users/' . time() . $_FILES['avatar']['name'];
 
                 if (move_uploaded_file($from, PATH_ROOT . $to)) {
                     $data['avatar'] = $to;

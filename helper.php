@@ -10,7 +10,7 @@ if (!function_exists('asset')) {
 }
 
 if (!function_exists('url')) {
-    function url($uri = null)
+    function url($uri = null) // tránh hai dấu /
     {
         return $_ENV['BASE_URL'] . $uri;
     }

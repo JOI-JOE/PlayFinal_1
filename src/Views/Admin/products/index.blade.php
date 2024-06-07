@@ -32,11 +32,11 @@
                             <tr>
                                 <th scope="row">{{ $product['id'] }}</th>
                                 <td>{{ $product['name'] }}</td>
-                                <td>{{ $product['price'] }}</td>
+                                <td>{{ number_format($product['price_regular'], 2) }}$</td>
                                 <td>{{ $product['c_name'] }}</td>
                                 <td>
-                                    @if (!empty($product['product_img']))
-                                        <img src="{{ asset("{$product['product_img']}") }}" alt="" width="100"
+                                    @if (!empty($product['img_thumbnail']))
+                                        <img src="{{ asset("{$product['img_thumbnail']}") }}" alt="" width="100"
                                             style="border-radius: 10px;">
                                     @else
                                         <p>No photo</p>

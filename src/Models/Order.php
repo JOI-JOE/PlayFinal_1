@@ -4,7 +4,7 @@ namespace Danghau\Playfinal\Models;
 
 use Danghau\Playfinal\Commons\Model;
 
-class Category extends Model
+class Order extends Model
 {
-    protected string $tableName = 'categories';
+    protected string $tableName = 'orders';
 }
