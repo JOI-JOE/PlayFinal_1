@@ -2,8 +2,9 @@
 
 session_start();
 
-require_once __DIR__ . '/vendor/autoload.php';
+$_SESSION['user'] ??= [];
 
+require_once __DIR__ . '/vendor/autoload.php';
 
 // DIR nó đạt được đường dẫn tuyệt đối
 // không lo dấu chấm 

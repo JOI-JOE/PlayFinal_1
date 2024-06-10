@@ -50,6 +50,7 @@ class ProductController extends Controller
                 'name'                     => 'required',
                 'price_regular'            => 'required|regex:/^\d+(\.\d{1,2})?$/',
                 'category_id'              => 'required',
+                // 'price_sale'               => 'required|',
                 'img_thumbnail'            => 'uploaded_file:0,1000K,png,jpeg', // File must be under 1MB and in jpeg or png format
             ]
         );

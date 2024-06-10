@@ -17,7 +17,6 @@
                     @if (!empty($_SESSION['cart']) || !empty($_SESSION['cart-' . $_SESSION['user']['id']]))
                         @php
                             $cart = $_SESSION['cart'] ?? $_SESSION['cart-' . $_SESSION['user']['id']];
-
                         @endphp
                         @foreach ($cart as $item)
                             <div class="md:flex items-strech py-8 md:py-10 lg:py-8 border-t border-gray-50">
@@ -84,6 +83,7 @@
                             </div>
                         @endforeach
                     @endif
+
 
                     <div class="md:flex items-strech py-8 md:py-10 lg:py-8 border-t border-gray-50">
                         <div class="md:w-4/12 2xl:w-1/4 w-full">

@@ -38,12 +38,13 @@
 
                 <article class="sneaker">
                     <div class="sneaker__sale">Sale</div>
-                    <imgla src="assets/img/featured2.png" alt="" class="sneaker__img">
-                        <span class="sneaker__name">Nike Free RN</span>
-                        <span class="sneaker__preci">$149.99</span>
-                        <a href="#" class="button-light">Add to Cart <i
-                                class='bx bx-right-arrow-alt button-icon'></i></a>
+                    <img src="assets/img/featured1.png" alt="" class="sneaker__img">
+                    <span class="sneaker__name">Nike Jordan</span>
+                    <span class="sneaker__preci">$149.99</span>
+                    <a href="#" class="button-light">Add to Cart <i class='bx bx-right-arrow-alt button-icon'></i></a>
                 </article>
+
+
 
                 <article class="sneaker">
                     <div class="sneaker__sale">Sale</div>

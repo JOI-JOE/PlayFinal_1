@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    Cập nhật người dùng: {{ $user['name'] }}
+    Detail User: {{ $user['name'] }}
 @endsection
 
 @section('content') <h1>Cập nhật người dùng: {{ $user['name'] }}
@@ -21,9 +21,10 @@
         </div>
     @endif
 
-    @if (isset($_SESSION['status']) && $_SESSION['status'])
-        <div class="alert alert-success">
-            {{ $_SESSION['msg'] }}
+    @if (isset($_SESSION['status']))
+        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
+            role="alert">
+            <span class="font-medium"> {{ $_SESSION['msg'] }}</span>
         </div>
 
         @php
@@ -31,6 +32,7 @@
             unset($_SESSION['msg']);
         @endphp
     @endif
+
 
     <form action="{{ url("admin/users/{$user['id']}/update") }}" enctype="multipart/form-data" method="POST">
         <div class="mb-3 mt-3">

@@ -110,7 +110,7 @@ class UserController extends Controller
             'email'                 => 'required|email',
             'password'              => 'min:6',
             'avatar'                => 'uploaded_file:0,2M,png,jpg,jpeg',
-            'type'                  => 'required|in:admin,member',
+            'type'                  => 'in:admin,member',
         ]);
         $validation->validate();
 

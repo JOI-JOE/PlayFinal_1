@@ -75,17 +75,16 @@ class OrderController extends Controller
             ]);
         }
 
-        $this->cartDetail->deleteByCartID($_SESSION['cart_id']);
-        $this->cart->deleteByUserID($_SESSION['cart_id']);
         // Xóa dữ liệu Cart + CartDetail
+        $this->cartDetail->deleteByCartID($_SESSION['cart_id']);
+        $this->cart->deleteByUserID($_SESSION['user']['id']);
 
         // Xóa trong SESSION
-        unset($_SESSION['key']);
+        unset($_SESSION[$key]);
 
         if (isset($_SESSION['user'])) {
             unset($_SESSION['cart_id']);
         }
-
 
         header('Location: ' . url(''));
         exit;

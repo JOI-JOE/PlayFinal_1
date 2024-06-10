@@ -19,7 +19,7 @@ if (!function_exists('url')) {
 if (!function_exists('is_logged')) { // Check đã đăng nhập
     function is_logged()
     {
-        return isset($_SESSION['user']);
+        return !empty($_SESSION['user']);
     }
 }
 
